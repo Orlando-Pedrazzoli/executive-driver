@@ -56,7 +56,7 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    font-feature-settings: 'rlig' 1, 'calt' 1;
   }
 }
 
@@ -64,7 +64,7 @@
   .text-balance {
     text-wrap: balance;
   }
-  
+
   .animate-in {
     animation-name: fade-in;
     animation-duration: 0.5s;
@@ -110,7 +110,8 @@
 
 /* WhatsApp button pulse animation */
 @keyframes pulse-whatsapp {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
   }
@@ -122,4 +123,273 @@
 
 .whatsapp-pulse {
   animation: pulse-whatsapp 2s infinite;
+}
+/* Adicione estas classes ao seu arquivo globals.css */
+
+/* Animação de gradiente para botão de destaque */
+@keyframes gradient-x {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-gradient-x {
+  background-size: 200% 200%;
+  animation: gradient-x 3s ease infinite;
+}
+
+/* Efeito de glass morphism aprimorado */
+.glass-effect-premium {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Navbar com efeito de blur progressivo */
+.navbar-blur-gradient {
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(255, 255, 255, 0.9) 50%,
+    rgba(255, 255, 255, 0.85) 100%
+  );
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Animação de entrada suave */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slideDown {
+  animation: slideDown 0.5s ease-out;
+}
+
+/* Hover com glow effect */
+.glow-hover {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.glow-hover::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    circle at center,
+    rgba(192, 176, 155, 0.3) 0%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.glow-hover:hover::before {
+  opacity: 1;
+}
+
+/* Indicador ativo com animação */
+@keyframes pulse-indicator {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.5;
+  }
+}
+
+.active-indicator {
+  animation: pulse-indicator 2s ease-in-out infinite;
+}
+
+/* Menu mobile com slide elegante */
+.mobile-menu-slide {
+  animation: slideFromRight 0.3s ease-out;
+}
+
+@keyframes slideFromRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Texto com sombra premium */
+.text-shadow-premium {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.1),
+    0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Botão com efeito de onda */
+.ripple-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple-effect::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.ripple-effect:active::after {
+  width: 300px;
+  height: 300px;
+}
+
+/* Progress bar animada */
+.progress-bar-animated {
+  background: linear-gradient(90deg, #004862 0%, #c0b09b 50%, #004862 100%);
+  background-size: 200% 100%;
+  animation: progress-animation 2s linear infinite;
+}
+
+@keyframes progress-animation {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+/* Hover com transformação 3D */
+.hover-3d {
+  transition: transform 0.3s ease;
+  transform-style: preserve-3d;
+}
+
+.hover-3d:hover {
+  transform: perspective(1000px) rotateX(-10deg) translateY(-4px);
+}
+
+/* Underline animado */
+.underline-animated {
+  position: relative;
+}
+
+.underline-animated::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: currentColor;
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.underline-animated:hover::after {
+  width: 100%;
+}
+
+/* Navbar com mudança de altura suave */
+.navbar-height-transition {
+  transition: padding 0.3s ease, height 0.3s ease;
+}
+
+/* Efeito de highlight no scroll */
+@keyframes highlight-scroll {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+.highlight-on-scroll {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(192, 176, 155, 0.2),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: highlight-scroll 3s ease infinite;
+}
+
+/* Mobile menu overlay com blur */
+.mobile-overlay {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* Botão com sombra colorida */
+.shadow-colored {
+  box-shadow: 0 4px 14px 0 rgba(0, 72, 98, 0.2),
+    0 6px 20px 0 rgba(192, 176, 155, 0.15);
+  transition: box-shadow 0.3s ease;
+}
+
+.shadow-colored:hover {
+  box-shadow: 0 6px 20px 0 rgba(0, 72, 98, 0.3),
+    0 8px 25px 0 rgba(192, 176, 155, 0.2);
+}
+
+/* Animação de fade in sequencial */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+/* Delays para animação sequencial */
+.animation-delay-100 {
+  animation-delay: 100ms;
+}
+.animation-delay-200 {
+  animation-delay: 200ms;
+}
+.animation-delay-300 {
+  animation-delay: 300ms;
+}
+.animation-delay-400 {
+  animation-delay: 400ms;
+}
+.animation-delay-500 {
+  animation-delay: 500ms;
 }

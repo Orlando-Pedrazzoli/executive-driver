@@ -37,7 +37,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
-// Validation schema com Zod
+// Validation schema com Zod - CORRIGIDO para aceitar strings de data
 const bookingSchema = z.object({
   // Step 1 - Informações Pessoais
   fullName: z.string().min(3, 'Nome completo obrigatório'),
@@ -58,7 +58,7 @@ const bookingSchema = z.object({
     .optional()
     .or(z.literal('')),
 
-  // Step 2 - Detalhes da Viagem
+  // Step 2 - Detalhes da Viagem - CORRIGIDO para aceitar strings
   serviceType: z.enum(['airport', 'executive', 'event', 'tourism', 'contract']),
   pickupAddress: z.string().min(5, 'Endereço de embarque obrigatório'),
   pickupCoordinates: z.object({ lat: z.number(), lng: z.number() }).optional(),
@@ -66,10 +66,10 @@ const bookingSchema = z.object({
   destinationCoordinates: z
     .object({ lat: z.number(), lng: z.number() })
     .optional(),
-  tripDate: z.date(),
-  tripTime: z.string(),
+  tripDate: z.string().min(1, 'Data obrigatória'), // Mudado para string
+  tripTime: z.string().min(1, 'Horário obrigatório'),
   returnTrip: z.boolean(),
-  returnDate: z.date().optional(),
+  returnDate: z.string().optional(), // Mudado para string
   returnTime: z.string().optional(),
 
   // Step 3 - Necessidades Especiais
@@ -110,7 +110,13 @@ export default function BookingPage() {
     resolver: zodResolver(bookingSchema),
     mode: 'onChange',
     defaultValues: {
+      fullName: '',
+      email: '',
+      phone: '',
+      cpf: '',
       isCompany: false,
+      companyName: '',
+      cnpj: '',
       returnTrip: false,
       passengers: 1,
       vehicleType: 'executive',
@@ -123,20 +129,38 @@ export default function BookingPage() {
       },
       paymentMethod: 'pix',
       acceptTerms: false,
+      tripDate: '',
+      tripTime: '',
+      returnDate: '',
+      returnTime: '',
+      pickupAddress: '',
+      destinationAddress: '',
+      observations: '',
     },
   });
 
-  const { watch, setValue } = methods;
+  const { watch, setValue, formState } = methods;
+
+  // Debug para verificar erros
+  useEffect(() => {
+    if (formState.errors && Object.keys(formState.errors).length > 0) {
+      console.log('Erros de validação:', formState.errors);
+    }
+  }, [formState.errors]);
 
   // Load saved form data from localStorage
   useEffect(() => {
     const saved = localStorage.getItem('bookingFormData');
     if (saved) {
-      const data = JSON.parse(saved);
-      setSavedFormData(data);
-      Object.keys(data).forEach(key => {
-        setValue(key as any, data[key]);
-      });
+      try {
+        const data = JSON.parse(saved);
+        setSavedFormData(data);
+        Object.keys(data).forEach(key => {
+          setValue(key as any, data[key]);
+        });
+      } catch (error) {
+        console.error('Erro ao carregar dados salvos:', error);
+      }
     }
   }, [setValue]);
 
@@ -209,8 +233,21 @@ export default function BookingPage() {
     }, 1500);
   };
 
-  // Submit form
+  // Helper function para formatar data para exibição
+  const formatDateForDisplay = (dateString: string) => {
+    if (!dateString) return '';
+    try {
+      const [year, month, day] = dateString.split('-');
+      return `${day}/${month}/${year}`;
+    } catch {
+      return dateString;
+    }
+  };
+
+  // Submit form - CORRIGIDO
   const onSubmit = async (data: BookingFormData) => {
+    console.log('Iniciando submit com dados:', data);
+
     try {
       // Format message for WhatsApp
       const message = `
@@ -220,6 +257,7 @@ export default function BookingPage() {
 👤 Nome: ${data.fullName}
 📧 Email: ${data.email}
 📱 Telefone: ${data.phone}
+${data.cpf ? `📄 CPF: ${data.cpf}\n` : ''}
 ${
   data.isCompany ? `🏢 Empresa: ${data.companyName}\n📄 CNPJ: ${data.cnpj}` : ''
 }
@@ -227,11 +265,11 @@ ${
 *DETALHES DA VIAGEM*
 📍 Embarque: ${data.pickupAddress}
 📍 Destino: ${data.destinationAddress}
-📅 Data: ${data.tripDate.toLocaleDateString('pt-BR')}
+📅 Data: ${formatDateForDisplay(data.tripDate)}
 🕐 Horário: ${data.tripTime}
 ${
   data.returnTrip
-    ? `🔄 Volta: ${data.returnDate?.toLocaleDateString('pt-BR')} às ${
+    ? `🔄 Volta: ${formatDateForDisplay(data.returnDate || '')} às ${
         data.returnTime
       }`
     : ''
@@ -260,13 +298,17 @@ ${data.observations ? `📝 Observações: ${data.observations}\n` : ''}
           ? 'Cartão'
           : 'Faturamento'
       }
-💰 Valor estimado: R$ ${estimatedPrice?.toFixed(2)}
+💰 Valor estimado: R$ ${estimatedPrice?.toFixed(2) || 'A calcular'}
       `.trim();
+
+      console.log('Mensagem formatada:', message);
 
       // Send to WhatsApp
       const whatsappNumber = '351912164220'; // Replace with real number
       const encodedMessage = encodeURIComponent(message);
       const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+
+      console.log('URL do WhatsApp:', whatsappUrl);
 
       // Clear saved form data
       localStorage.removeItem('bookingFormData');
@@ -279,7 +321,9 @@ ${data.observations ? `📝 Observações: ${data.observations}\n` : ''}
       // Reset form
       methods.reset();
       setCurrentStep(1);
+      setEstimatedPrice(null);
     } catch (error) {
+      console.error('Erro ao enviar reserva:', error);
       toast.error('Erro ao enviar reserva. Tente novamente.');
     }
   };
@@ -287,6 +331,19 @@ ${data.observations ? `📝 Observações: ${data.observations}\n` : ''}
   const nextStep = async () => {
     const fields = getFieldsForStep(currentStep);
     const isValid = await methods.trigger(fields as any);
+
+    console.log('Validação do passo', currentStep, ':', isValid);
+    console.log('Campos validados:', fields);
+
+    if (!isValid) {
+      console.log('Erros encontrados:', methods.formState.errors);
+      // Mostrar toast com o primeiro erro encontrado
+      const firstError = Object.values(methods.formState.errors)[0];
+      if (firstError && 'message' in firstError) {
+        toast.error(firstError.message as string);
+      }
+      return;
+    }
 
     if (isValid) {
       if (currentStep === 2) {
@@ -401,7 +458,10 @@ ${data.observations ? `📝 Observações: ${data.observations}\n` : ''}
         {/* Form Content */}
         <FormProvider {...methods}>
           <form
-            onSubmit={methods.handleSubmit(onSubmit)}
+            onSubmit={methods.handleSubmit(onSubmit, errors => {
+              console.log('Erros no submit:', errors);
+              toast.error('Por favor, verifique os campos obrigatórios');
+            })}
             className='max-w-4xl mx-auto'
           >
             <div className='bg-white rounded-2xl shadow-premium p-8'>
@@ -660,9 +720,7 @@ ${data.observations ? `📝 Observações: ${data.observations}\n` : ''}
                         </label>
                         <input
                           type='date'
-                          {...methods.register('tripDate', {
-                            valueAsDate: true,
-                          })}
+                          {...methods.register('tripDate')}
                           min={new Date().toISOString().split('T')[0]}
                           className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary'
                         />
@@ -717,12 +775,8 @@ ${data.observations ? `📝 Observações: ${data.observations}\n` : ''}
                             </label>
                             <input
                               type='date'
-                              {...methods.register('returnDate', {
-                                valueAsDate: true,
-                              })}
-                              min={
-                                watch('tripDate')?.toISOString().split('T')[0]
-                              }
+                              {...methods.register('returnDate')}
+                              min={watch('tripDate')}
                               className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary'
                             />
                           </div>
@@ -925,7 +979,7 @@ ${data.observations ? `📝 Observações: ${data.observations}\n` : ''}
                         <div className='flex justify-between'>
                           <span className='text-gray-600'>Data:</span>
                           <span className='font-medium'>
-                            {watch('tripDate')?.toLocaleDateString('pt-BR')} às{' '}
+                            {formatDateForDisplay(watch('tripDate'))} às{' '}
                             {watch('tripTime')}
                           </span>
                         </div>
