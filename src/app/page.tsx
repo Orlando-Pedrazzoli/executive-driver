@@ -331,7 +331,7 @@ export default function HomePage() {
             className='text-center mb-12'
           >
             <h2 className='text-4xl font-bold mb-4'>
-              Por Que Escolher a Elite Driver?
+              Por Que Escolher a Seo ?
             </h2>
             <p className='text-gray-300 max-w-2xl mx-auto'>
               Comprometimento com excelência em cada detalhe da sua viagem
