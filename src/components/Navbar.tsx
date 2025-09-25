@@ -200,21 +200,6 @@ export default function Navbar() {
                   <span className='relative z-10'>Agendamento</span>
                 </motion.button>
               </Link>
-
-              {/* Botão Ligar Secundário */}
-              <a href='tel:+5511999999999'>
-                <motion.button
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                  className='
-                    flex items-center gap-2 px-5 py-2.5 rounded-full transition-all duration-300
-                    font-medium bg-green-500 text-white shadow-md hover:shadow-lg hover:bg-green-600
-                  '
-                >
-                  <Phone className='w-4 h-4 animate-pulse' />
-                  <span>Ligar</span>
-                </motion.button>
-              </a>
             </div>
           </div>
 
