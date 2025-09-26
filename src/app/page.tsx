@@ -33,11 +33,11 @@ export default function HomePage() {
     <div className='min-h-screen'>
       {/* Hero Section - USANDO IMAGEM LOCAL */}
       <section className='relative min-h-screen flex items-center justify-center overflow-hidden'>
-        {/* Background Image with Overlay - ATUALIZADO */}
+        {/* Background Image with Overlay */}
         <div className='absolute inset-0 z-0'>
           <div className='absolute inset-0 bg-gradient-to-r from-primary/90 to-primary/70 z-10' />
           <Image
-            src='/hero-seo.png' // MUDANÇA: Usando imagem local da pasta public
+            src='/hero-seo.png'
             alt='Elite Driver - Mobilidade Executiva'
             fill
             className='object-cover'
@@ -46,8 +46,8 @@ export default function HomePage() {
           />
         </div>
 
-        {/* Hero Content */}
-        <div className='container mx-auto px-4 relative z-20 pt-20'>
+        {/* Hero Content - PADDING AJUSTADO PARA MOBILE */}
+        <div className='container mx-auto px-4 relative z-20 pt-32 pb-20 md:pt-24 md:pb-16'>
           <div className='max-w-3xl'>
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -62,12 +62,12 @@ export default function HomePage() {
                 </span>
               </div>
 
-              <h1 className='text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight'>
+              <h1 className='text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight'>
                 Motorista Executiva
                 <span className='block text-secondary mt-2'>Premium</span>
               </h1>
 
-              <p className='text-xl text-gray-200 leading-relaxed'>
+              <p className='text-lg sm:text-xl text-gray-200 leading-relaxed'>
                 Transforme suas viagens em experiências excepcionais. Serviço
                 personalizado de transporte executivo com pontualidade,
                 discrição e o mais alto padrão de qualidade.
@@ -97,31 +97,43 @@ export default function HomePage() {
                 </Link>
               </div>
 
-              {/* Quick Stats */}
-              <div className='grid grid-cols-3 gap-6 pt-8'>
+              {/* Quick Stats - MELHOR ESPAÇAMENTO MOBILE */}
+              <div className='grid grid-cols-3 gap-4 sm:gap-6 pt-8 pb-4'>
                 <div className='text-center'>
-                  <p className='text-3xl font-bold text-secondary'>500+</p>
-                  <p className='text-sm text-gray-300'>Clientes Satisfeitos</p>
+                  <p className='text-2xl sm:text-3xl font-bold text-secondary'>
+                    500+
+                  </p>
+                  <p className='text-xs sm:text-sm text-gray-300'>
+                    Clientes Satisfeitos
+                  </p>
                 </div>
                 <div className='text-center'>
-                  <p className='text-3xl font-bold text-secondary'>4.9★</p>
-                  <p className='text-sm text-gray-300'>Avaliação Média</p>
+                  <p className='text-2xl sm:text-3xl font-bold text-secondary'>
+                    4.9★
+                  </p>
+                  <p className='text-xs sm:text-sm text-gray-300'>
+                    Avaliação Média
+                  </p>
                 </div>
                 <div className='text-center'>
-                  <p className='text-3xl font-bold text-secondary'>24/7</p>
-                  <p className='text-sm text-gray-300'>Disponibilidade</p>
+                  <p className='text-2xl sm:text-3xl font-bold text-secondary'>
+                    24/7
+                  </p>
+                  <p className='text-xs sm:text-sm text-gray-300'>
+                    Disponibilidade
+                  </p>
                 </div>
               </div>
             </motion.div>
           </div>
         </div>
 
-        {/* Scroll Indicator */}
+        {/* Scroll Indicator - OCULTO NO MOBILE */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.5 }}
-          className='absolute bottom-8 left-1/2 transform -translate-x-1/2'
+          className='hidden md:block absolute bottom-8 left-1/2 transform -translate-x-1/2'
         >
           <motion.div
             animate={{ y: [0, 10, 0] }}
@@ -133,8 +145,8 @@ export default function HomePage() {
         </motion.div>
       </section>
 
-      {/* Services Preview Section */}
-      <section ref={ref1} className='py-20 bg-white'>
+      {/* Services Preview Section - PADDING AJUSTADO */}
+      <section ref={ref1} className='py-16 sm:py-20 bg-white'>
         <div className='container mx-auto px-4'>
           <motion.div
             initial={{ opacity: 0 }}
@@ -142,7 +154,7 @@ export default function HomePage() {
             transition={{ duration: 0.8 }}
             className='text-center mb-12'
           >
-            <h2 className='text-4xl font-bold text-primary mb-4'>
+            <h2 className='text-3xl sm:text-4xl font-bold text-primary mb-4'>
               Serviços Exclusivos
             </h2>
             <p className='text-gray-600 max-w-2xl mx-auto'>
@@ -194,7 +206,7 @@ export default function HomePage() {
                 className='bg-gray-50 rounded-2xl p-6 hover:shadow-premium transition-all duration-300 group'
               >
                 <div className='bg-gradient-primary rounded-full w-14 h-14 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform'>
-                  <service.icon className='w-7 h-7 text-white' />
+                  <service.icon className='w-7 h-7 text-secondary' />
                 </div>
                 <h3 className='text-xl font-semibold text-primary mb-2'>
                   {service.title}
@@ -229,10 +241,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Reviews Section */}
+      {/* Reviews Section - PADDING AJUSTADO */}
       <section
         ref={ref2}
-        className='py-20 bg-gradient-to-br from-gray-50 to-white'
+        className='py-16 sm:py-20 bg-gradient-to-br from-gray-50 to-white'
       >
         <div className='container mx-auto px-4'>
           <motion.div
@@ -241,7 +253,7 @@ export default function HomePage() {
             transition={{ duration: 0.8 }}
             className='text-center mb-12'
           >
-            <h2 className='text-4xl font-bold text-primary mb-4'>
+            <h2 className='text-3xl sm:text-4xl font-bold text-primary mb-4'>
               O Que Nossos Clientes Dizem
             </h2>
             <p className='text-gray-600 max-w-2xl mx-auto'>
@@ -321,8 +333,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Why Choose Us Section */}
-      <section ref={ref3} className='py-20 bg-primary text-white'>
+      {/* Why Choose Us Section - PADDING AJUSTADO */}
+      <section ref={ref3} className='py-16 sm:py-20 bg-primary text-white'>
         <div className='container mx-auto px-4'>
           <motion.div
             initial={{ opacity: 0 }}
@@ -330,7 +342,7 @@ export default function HomePage() {
             transition={{ duration: 0.8 }}
             className='text-center mb-12'
           >
-            <h2 className='text-4xl font-bold mb-4'>
+            <h2 className='text-3xl sm:text-4xl font-bold mb-4'>
               Por Que Escolher a Seo ?
             </h2>
             <p className='text-gray-300 max-w-2xl mx-auto'>
@@ -338,7 +350,7 @@ export default function HomePage() {
             </p>
           </motion.div>
 
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
+          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6'>
             {[
               {
                 icon: Shield,
@@ -381,13 +393,13 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className='py-20 bg-gradient-to-r from-secondary to-secondary-600'>
+      {/* CTA Section - PADDING AJUSTADO */}
+      <section className='py-16 sm:py-20 bg-gradient-to-r from-secondary to-secondary-600'>
         <div className='container mx-auto px-4 text-center'>
-          <h2 className='text-4xl font-bold text-primary mb-4'>
+          <h2 className='text-3xl sm:text-4xl font-bold text-primary mb-4'>
             Pronto para uma Experiência Premium?
           </h2>
-          <p className='text-primary/80 text-xl mb-8 max-w-2xl mx-auto'>
+          <p className='text-primary/80 text-lg sm:text-xl mb-8 max-w-2xl mx-auto'>
             Agende sua viagem agora e descubra o verdadeiro significado de
             transporte executivo
           </p>
@@ -396,7 +408,7 @@ export default function HomePage() {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className='bg-primary hover:bg-primary-700 text-white font-semibold px-10 py-4 rounded-full shadow-xl inline-flex items-center gap-2'
+                className='bg-primary hover:bg-primary-700 text-white font-semibold px-8 sm:px-10 py-4 rounded-full shadow-xl inline-flex items-center gap-2 w-full sm:w-auto justify-center'
               >
                 <Calendar className='w-5 h-5' />
                 Fazer Agendamento
@@ -406,7 +418,7 @@ export default function HomePage() {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className='bg-white hover:bg-gray-50 text-primary font-semibold px-10 py-4 rounded-full shadow-xl inline-flex items-center gap-2'
+                className='bg-white hover:bg-gray-50 text-primary font-semibold px-8 sm:px-10 py-4 rounded-full shadow-xl inline-flex items-center gap-2 w-full sm:w-auto justify-center'
               >
                 <Phone className='w-5 h-5' />
                 Ligar Agora
