@@ -393,3 +393,38 @@
 .animation-delay-500 {
   animation-delay: 500ms;
 }
+/* Fix para menu mobile sempre acima de tudo */
+.mobile-menu-top-priority {
+  z-index: 99999 !important;
+  position: fixed !important;
+}
+
+.mobile-overlay-priority {
+  z-index: 99998 !important;
+  position: fixed !important;
+}
+
+/* Navbar com contexto isolado */
+.navbar-isolated {
+  isolation: isolate;
+  z-index: 100;
+}
+
+/* Hero section deve ficar abaixo */
+.hero-section {
+  position: relative;
+  z-index: 1;
+}
+
+/* Garantir que o menu mobile ignore qualquer contexto de stacking */
+[data-mobile-menu='true'] {
+  z-index: 99999 !important;
+  position: fixed !important;
+  isolation: isolate !important;
+}
+
+[data-mobile-overlay='true'] {
+  z-index: 99998 !important;
+  position: fixed !important;
+  isolation: isolate !important;
+}
