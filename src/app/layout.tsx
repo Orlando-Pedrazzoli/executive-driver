@@ -5,26 +5,23 @@ import { Toaster } from 'react-hot-toast';
 import WhatsAppButton from '@/components/WhatsAppButton';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-// Importe o componente de debug (remova após funcionar)
-// import FaviconDebug from '@/components/FaviconDebug';
 
 const poppins = Poppins({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700', '800', '900'],
 });
 
-// Tente usar apenas o caminho direto sem array
 export const metadata: Metadata = {
-  title: 'Seo | Mobilidade Executiva Premium',
+  title: 'SEOO | Mobilidade Executiva para Mulheres',
   description:
-    'Serviço de motorista executiva de luxo. Transfers para aeroportos, viagens corporativas e eventos com conforto e segurança.',
+    'Mobilidade executiva pensada exclusivamente para mulheres, com motoristas 100% femininas. Conforto, segurança e tranquilidade a cada trajeto.',
   keywords:
-    'motorista executiva, driver executivo, transfer aeroporto, motorista particular, transporte executivo, mobilidade executiva, São Paulo, Brasil',
-  authors: [{ name: 'Seo Mobilidade Executiva' }],
-  creator: 'Seo Mobilidade Executiva',
-  publisher: 'Seo Mobilidade Executiva',
+    'SEOO, mobilidade executiva, motorista mulher, driver feminina, transfer aeroporto, transporte executivo mulheres, motorista particular mulher, São Paulo, Brasil',
+  authors: [{ name: 'SEOO Mobilidade Executiva' }],
+  creator: 'SEOO Mobilidade Executiva',
+  publisher: 'Somas Group Ltda',
 
-  // CONFIGURAÇÃO SIMPLIFICADA DO FAVICON
+  // Favicon
   icons: {
     icon: '/favicon.ico',
     shortcut: '/favicon.ico',
@@ -36,19 +33,19 @@ export const metadata: Metadata = {
 
   // Open Graph para redes sociais
   openGraph: {
-    title: 'Seo | Mobilidade Executiva Premium',
+    title: 'SEOO | Mobilidade Executiva para Mulheres',
     description:
-      'Serviço de motorista executiva de luxo. Transfers premium e transporte corporativo.',
+      'Mobilidade pensada para mulheres. Motoristas 100% femininas, SUVs híbridos premium. Segurança, conforto e respeito.',
     type: 'website',
     locale: 'pt_BR',
-    siteName: 'Seo Mobilidade Executiva',
-    url: 'https://seomobilidadeexecutiva.com.br',
+    siteName: 'SEOO Mobilidade Executiva',
+    url: 'https://seoomob.com.br',
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Seo - Mobilidade Executiva',
+        alt: 'SEOO - Mobilidade Executiva',
       },
     ],
   },
@@ -56,9 +53,9 @@ export const metadata: Metadata = {
   // Twitter Card
   twitter: {
     card: 'summary_large_image',
-    title: 'Seo | Mobilidade Executiva Premium',
-    description: 'Serviço de motorista executiva de luxo no Brasil',
-    creator: '@seomobilidade',
+    title: 'SEOO | Mobilidade Executiva para Mulheres',
+    description: 'Mobilidade pensada exclusivamente para mulheres. 100% motoristas femininas.',
+    creator: '@seoo.mob',
     images: ['/twitter-image.png'],
   },
 
@@ -85,7 +82,7 @@ export const metadata: Metadata = {
 
   // Configurações adicionais
   alternates: {
-    canonical: 'https://seomobilidadeexecutiva.com.br',
+    canonical: 'https://seoomob.com.br',
   },
 
   // Categoria
@@ -100,11 +97,11 @@ export default function RootLayout({
   return (
     <html lang='pt-BR' className={poppins.className}>
       <head>
-        {/* MÉTODO 1: Tags HTML diretas com cache busting */}
+        {/* Tags HTML diretas com cache busting */}
         <link rel='icon' type='image/x-icon' href='/favicon.ico?v=2' />
         <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico?v=2' />
 
-        {/* MÉTODO 2: Favicon alternativo em PNG (caso o .ico não funcione) */}
+        {/* Favicon alternativo em PNG */}
         <link
           rel='icon'
           type='image/png'
@@ -117,11 +114,6 @@ export default function RootLayout({
           sizes='16x16'
           href='/favicon-16x16.png'
         />
-
-        {/* MÉTODO 3: Favicon inline base64 (último recurso) */}
-        {/* Se nada funcionar, converta seu favicon para base64 e cole aqui:
-        <link rel='icon' type='image/x-icon' href='data:image/x-icon;base64,COLE_O_BASE64_AQUI' />
-        */}
 
         {/* Apple Touch Icon */}
         <link
@@ -139,10 +131,10 @@ export default function RootLayout({
         />
 
         {/* Meta tags adicionais */}
-        <meta name='application-name' content='Seo Mobilidade Executiva' />
+        <meta name='application-name' content='SEOO Mobilidade Executiva' />
         <meta name='apple-mobile-web-app-capable' content='yes' />
         <meta name='apple-mobile-web-app-status-bar-style' content='default' />
-        <meta name='apple-mobile-web-app-title' content='Seo Mobilidade' />
+        <meta name='apple-mobile-web-app-title' content='SEOO' />
         <meta name='format-detection' content='telephone=yes' />
         <meta name='mobile-web-app-capable' content='yes' />
         <meta name='theme-color' content='#004862' />
@@ -154,15 +146,18 @@ export default function RootLayout({
             __html: JSON.stringify({
               '@context': 'https://schema.org',
               '@type': 'LocalBusiness',
-              name: 'Seo Mobilidade Executiva',
+              name: 'SEOO Mobilidade Executiva',
               description:
-                'Serviço de motorista executiva premium e mobilidade executiva',
-              image: '/logo-preto-seo.png',
-              telephone: '+5511999999999',
+                'Mobilidade executiva pensada exclusivamente para mulheres, com motoristas 100% femininas',
+              image: '/logo-seoo.png',
+              telephone: '+5511945164043',
+              email: 'reservas@seomob.com.br',
               address: {
                 '@type': 'PostalAddress',
-                addressLocality: 'São Paulo',
+                streetAddress: 'Rua Coronel José Eusébio, 95',
+                addressLocality: 'Higienópolis',
                 addressRegion: 'SP',
+                postalCode: '01239-030',
                 addressCountry: 'BR',
               },
               openingHoursSpecification: {
@@ -182,17 +177,19 @@ export default function RootLayout({
               priceRange: '$$$',
               aggregateRating: {
                 '@type': 'AggregateRating',
-                ratingValue: '4.9',
+                ratingValue: '5.0',
                 reviewCount: '500',
               },
+              sameAs: [
+                'https://instagram.com/seoo.mob',
+                'https://facebook.com/seoomobilidade',
+                'https://linkedin.com/company/seoo-mobilidade-executiva',
+              ],
             }),
           }}
         />
       </head>
       <body className='min-h-screen bg-gray-50 antialiased'>
-        {/* Adicione temporariamente para debug (remova depois) */}
-        {/* <FaviconDebug /> */}
-
         <Navbar />
         <main className='flex-1'>{children}</main>
         <Footer />

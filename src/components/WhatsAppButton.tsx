@@ -1,16 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { MessageCircle, X } from 'lucide-react';
+import { MessageCircle, X, Heart } from 'lucide-react';
 
 export default function WhatsAppButton() {
   const [isVisible, setIsVisible] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
 
-  // Por enquanto usar número placeholder - substituir com número real da cliente
-  const whatsappNumber = '351912164220';
-  const defaultMessage =
-    'Olá! Gostaria de solicitar um orçamento para serviço de motorista executiva.';
+  // Número real da SEOO do PDF
+  const whatsappNumber = '5511945164043';
+  const defaultMessage = 'Olá! Gostaria de solicitar informações sobre os serviços da SEOO Mobilidade Executiva. Estou interessada em um transporte seguro com motorista mulher.';
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -48,7 +47,15 @@ export default function WhatsAppButton() {
         <p className='text-sm font-medium text-gray-800'>
           Fale conosco no WhatsApp!
         </p>
-        <p className='text-xs text-gray-600'>Resposta em minutos</p>
+        <p className='text-xs text-gray-600'>
+          Atendimento 24/7
+        </p>
+        <div className='flex items-center gap-1 mt-1'>
+          <Heart className='w-3 h-3 text-secondary' />
+          <p className='text-xs text-secondary font-medium'>
+            100% Motoristas Mulheres
+          </p>
+        </div>
       </div>
 
       {/* WhatsApp Button */}

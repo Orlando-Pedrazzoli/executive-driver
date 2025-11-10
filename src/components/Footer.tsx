@@ -9,7 +9,11 @@ import {
   Shield,
   Award,
   Clock,
-  CreditCard,
+  Heart,
+  Instagram,
+  Facebook,
+  Linkedin,
+  Users,
 } from 'lucide-react';
 
 export default function Footer() {
@@ -27,17 +31,22 @@ export default function Footer() {
                 <Car className='w-8 h-8 text-secondary' />
               </div>
               <div>
-                <h3 className='font-bold text-xl'>Seo</h3>
+                <h3 className='font-bold text-xl'>SEOO</h3>
                 <p className='text-xs text-gray-300'>Mobilidade Executiva</p>
               </div>
             </div>
             <p className='text-gray-300 leading-relaxed'>
-              Serviço premium de motorista executiva com segurança, conforto e
-              pontualidade para suas viagens corporativas e pessoais.
+              Mobilidade pensada para mulheres, com conforto e tranquilidade 
+              a cada trajeto. Motoristas 100% femininas garantindo segurança 
+              e acolhimento.
             </p>
             <div className='flex flex-col space-y-2 text-sm'>
-              <p className='text-gray-300'>CNPJ: 00.000.000/0001-00</p>
-              <p className='text-gray-300'>São Paulo - SP</p>
+              <p className='text-gray-300'>Operada por: Somas Group Ltda</p>
+              <p className='text-gray-300'>CNPJ: 28.705.153/0001-53</p>
+            </div>
+            <div className='bg-white/10 backdrop-blur-sm rounded-lg p-3 inline-flex items-center gap-2'>
+              <Heart className='w-5 h-5 text-secondary' />
+              <p className='text-sm font-medium'>100% Motoristas Mulheres</p>
             </div>
           </div>
 
@@ -49,8 +58,10 @@ export default function Footer() {
             <ul className='space-y-2'>
               {[
                 { href: '/', label: 'Início' },
+                { href: '/empresa', label: 'Empresa' },
                 { href: '/servicos', label: 'Nossos Serviços' },
-                { href: '/sobre', label: 'Sobre a Motorista' },
+                { href: '/contato', label: 'Contato' },
+                { href: '/compliance', label: 'Compliance' },
                 { href: '/agendamento', label: 'Agendar Viagem' },
               ].map(link => (
                 <li key={link.href}>
@@ -72,12 +83,14 @@ export default function Footer() {
             </h4>
             <ul className='space-y-2 text-sm'>
               {[
-                'Transfer Executivo',
-                'Aeroporto VIP',
-                'Motorista por Contrato',
-                'Eventos Corporativos',
-                'City Tour Premium',
-                'Viagens Intermunicipais',
+                'SEOO Transfer',
+                'SEOO Corporate',
+                'SEOO Experience',
+                'SEOO Exclusive',
+                'SEOO Day Use',
+                'SEOO Travel',
+                'SEOO Care',
+                'SEOO Children & Teens',
               ].map(service => (
                 <li
                   key={service}
@@ -98,25 +111,53 @@ export default function Footer() {
 
             <div className='space-y-3 text-sm'>
               <a
-                href='tel:+5511999999999'
+                href='tel:+5511945164043'
                 className='flex items-center gap-3 text-gray-300 hover:text-secondary transition-colors'
               >
                 <Phone className='w-4 h-4' />
-                <span>(11) 99999-9999</span>
+                <span>(11) 94516-4043</span>
               </a>
 
               <a
-                href='mailto:contato@elitedriver.com.br'
+                href='mailto:reservas@seomob.com.br'
                 className='flex items-center gap-3 text-gray-300 hover:text-secondary transition-colors'
               >
                 <Mail className='w-4 h-4' />
-                <span>contato@elitedriver.com.br</span>
+                <span>reservas@seomob.com.br</span>
               </a>
 
               <div className='flex items-center gap-3 text-gray-300'>
                 <MapPin className='w-4 h-4 flex-shrink-0' />
-                <span>São Paulo, SP - Brasil</span>
+                <span>Rua Coronel José Eusébio, 95<br />Higienópolis - São Paulo/SP</span>
               </div>
+            </div>
+
+            {/* Social Media */}
+            <div className='flex gap-3 pt-4'>
+              <a
+                href='https://instagram.com/seoo.mob'
+                target='_blank'
+                rel='noopener noreferrer'
+                className='bg-white/10 hover:bg-white/20 rounded-full p-2 transition-colors'
+              >
+                <Instagram className='w-5 h-5' />
+              </a>
+              <a
+                href='https://facebook.com/seoomobilidade'
+                target='_blank'
+                rel='noopener noreferrer'
+                className='bg-white/10 hover:bg-white/20 rounded-full p-2 transition-colors'
+              >
+                <Facebook className='w-5 h-5' />
+              </a>
+              <a
+                href='https://linkedin.com/company/seoo-mobilidade'
+                target='_blank'
+                rel='noopener noreferrer'
+                className='bg-white/10 hover:bg-white/20 rounded-full p-2 transition-colors'
+              >
+                <Linkedin className='w-5 h-5' />
+              </a>
             </div>
 
             {/* Trust Badges */}
@@ -131,11 +172,11 @@ export default function Footer() {
               </div>
               <div className='bg-white/10 backdrop-blur-sm rounded-lg p-2 text-center'>
                 <Clock className='w-6 h-6 mx-auto text-secondary mb-1' />
-                <p className='text-xs'>Pontual</p>
+                <p className='text-xs'>24/7</p>
               </div>
               <div className='bg-white/10 backdrop-blur-sm rounded-lg p-2 text-center'>
-                <CreditCard className='w-6 h-6 mx-auto text-secondary mb-1' />
-                <p className='text-xs'>PIX</p>
+                <Users className='w-6 h-6 mx-auto text-secondary mb-1' />
+                <p className='text-xs'>Mulheres</p>
               </div>
             </div>
           </div>
@@ -147,7 +188,7 @@ export default function Footer() {
         <div className='container mx-auto px-4 py-4'>
           <div className='flex flex-col md:flex-row justify-between items-center gap-4 text-sm'>
             <p className='text-gray-300 text-center md:text-left'>
-              © {currentYear} Elite Driver. Todos os direitos reservados.
+              © {currentYear} SEOO Mobilidade Executiva. Todos os direitos reservados.
             </p>
             <div className='flex gap-6'>
               <Link
@@ -166,7 +207,7 @@ export default function Footer() {
                 href='/lgpd'
                 className='text-gray-300 hover:text-secondary transition-colors'
               >
-                LGPD
+                LGPD2025
               </Link>
             </div>
           </div>

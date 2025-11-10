@@ -34,10 +34,14 @@ import {
   Briefcase,
   Camera,
   FileText,
+  Heart,
+  Sparkles,
+  UserCheck,
 } from 'lucide-react';
 import Link from 'next/link';
 
-// Validation schema com Zod - CORRIGIDO para aceitar strings de data
+// Validation schema com Zod
+// Validation schema com Zod - CORRIGIDO
 const bookingSchema = z.object({
   // Step 1 - Informações Pessoais
   fullName: z.string().min(3, 'Nome completo obrigatório'),
@@ -47,47 +51,94 @@ const bookingSchema = z.object({
     .regex(/^\(\d{2}\)\s9\d{4}-\d{4}$/, 'Formato: (11) 99999-9999'),
   cpf: z
     .string()
-    .regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, 'CPF inválido')
     .optional()
-    .or(z.literal('')),
+    .transform(val => val === '' ? undefined : val)
+    .pipe(
+      z.union([
+        z.undefined(),
+        z.string().regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, 'CPF inválido')
+      ])
+    ),
   isCompany: z.boolean(),
-  companyName: z.string().optional().or(z.literal('')),
+  companyName: z.string().optional().transform(val => val === '' ? undefined : val),
   cnpj: z
     .string()
-    .regex(/^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/, 'CNPJ inválido')
     .optional()
-    .or(z.literal('')),
+    .transform(val => val === '' ? undefined : val)
+    .pipe(
+      z.union([
+        z.undefined(),
+        z.string().regex(/^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/, 'CNPJ inválido')
+      ])
+    ),
 
-  // Step 2 - Detalhes da Viagem - CORRIGIDO para aceitar strings
-  serviceType: z.enum(['airport', 'executive', 'event', 'tourism', 'contract']),
+  // Step 2 - Detalhes da Viagem
+  serviceType: z.enum(['transfer', 'corporate', 'experience', 'exclusive', 'dayuse', 'travel', 'care', 'children']),
   pickupAddress: z.string().min(5, 'Endereço de embarque obrigatório'),
   pickupCoordinates: z.object({ lat: z.number(), lng: z.number() }).optional(),
   destinationAddress: z.string().min(5, 'Endereço de destino obrigatório'),
   destinationCoordinates: z
     .object({ lat: z.number(), lng: z.number() })
     .optional(),
-  tripDate: z.string().min(1, 'Data obrigatória'), // Mudado para string
+  tripDate: z.string().min(1, 'Data obrigatória'),
   tripTime: z.string().min(1, 'Horário obrigatório'),
   returnTrip: z.boolean(),
-  returnDate: z.string().optional(), // Mudado para string
-  returnTime: z.string().optional(),
+  returnDate: z.string().optional().transform(val => val === '' ? undefined : val),
+  returnTime: z.string().optional().transform(val => val === '' ? undefined : val),
 
   // Step 3 - Necessidades Especiais
-  passengers: z.number().min(1).max(4),
+  passengers: z.number().min(1).max(7),
   vehicleType: z.enum(['executive', 'luxury', 'suv']),
   specialNeeds: z.object({
     wheelchair: z.boolean(),
     extraLuggage: z.boolean(),
     petFriendly: z.boolean(),
     childSeat: z.boolean(),
+    womanDriver: z.boolean(),
   }),
-  observations: z.string().optional(),
+  observations: z.string().optional().transform(val => val === '' ? undefined : val),
 
   // Step 4 - Pagamento
   paymentMethod: z.enum(['pix', 'card', 'invoice']),
   acceptTerms: z
     .boolean()
     .refine(val => val === true, 'Você deve aceitar os termos'),
+}).superRefine((data, ctx) => {
+  // Validação condicional para viagem de volta
+  if (data.returnTrip) {
+    if (!data.returnDate || data.returnDate === '') {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Data de volta obrigatória",
+        path: ["returnDate"]
+      });
+    }
+    if (!data.returnTime || data.returnTime === '') {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Horário de volta obrigatório",
+        path: ["returnTime"]
+      });
+    }
+  }
+  
+  // Validação condicional para empresa
+  if (data.isCompany) {
+    if (!data.companyName || data.companyName === '') {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Nome da empresa obrigatório",
+        path: ["companyName"]
+      });
+    }
+    if (!data.cnpj || data.cnpj === '') {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "CNPJ obrigatório",
+        path: ["cnpj"]
+      });
+    }
+  }
 });
 
 type BookingFormData = z.infer<typeof bookingSchema>;
@@ -97,6 +148,66 @@ const STEPS = [
   { id: 2, name: 'Detalhes da Viagem', icon: Navigation },
   { id: 3, name: 'Necessidades Especiais', icon: Star },
   { id: 4, name: 'Confirmação', icon: CheckCircle },
+];
+
+// Serviços SEOO atualizados
+const SEOO_SERVICES = [
+  {
+    value: 'transfer',
+    label: 'SEOO Transfer',
+    subtitle: 'Aeroportos e hotéis',
+    icon: Plane,
+    description: 'Transfers com pontualidade e conforto absoluto'
+  },
+  {
+    value: 'corporate',
+    label: 'SEOO Corporate',
+    subtitle: 'Executivo',
+    icon: Briefcase,
+    description: 'Atendimento exclusivo para executivas e empresas'
+  },
+  {
+    value: 'experience',
+    label: 'SEOO Experience',
+    subtitle: 'Eventos',
+    icon: Sparkles,
+    description: 'Logística completa para eventos e feiras'
+  },
+  {
+    value: 'exclusive',
+    label: 'SEOO Exclusive',
+    subtitle: 'Motorista fixa',
+    icon: UserCheck,
+    description: 'Contrato mensal com motorista exclusiva'
+  },
+  {
+    value: 'dayuse',
+    label: 'SEOO Day Use',
+    subtitle: 'Por período',
+    icon: Calendar,
+    description: 'Motorista dedicada por período determinado'
+  },
+  {
+    value: 'travel',
+    label: 'SEOO Travel',
+    subtitle: 'Viagens',
+    icon: MapPin,
+    description: 'Viagens intermunicipais com total conforto'
+  },
+  {
+    value: 'care',
+    label: 'SEOO Care',
+    subtitle: 'Cuidados especiais',
+    icon: Heart,
+    description: 'Atendimento para necessidades específicas'
+  },
+  {
+    value: 'children',
+    label: 'SEOO Children & Teens',
+    subtitle: 'Crianças',
+    icon: Baby,
+    description: 'Transporte seguro com motoristas que são mães'
+  },
 ];
 
 export default function BookingPage() {
@@ -119,13 +230,14 @@ export default function BookingPage() {
       cnpj: '',
       returnTrip: false,
       passengers: 1,
-      vehicleType: 'executive',
-      serviceType: 'airport',
+      vehicleType: 'suv',
+      serviceType: 'transfer',
       specialNeeds: {
         wheelchair: false,
         extraLuggage: false,
         petFriendly: false,
         childSeat: false,
+        womanDriver: true, // Por padrão, já que é 100% motoristas mulheres
       },
       paymentMethod: 'pix',
       acceptTerms: false,
@@ -150,7 +262,7 @@ export default function BookingPage() {
 
   // Load saved form data from localStorage
   useEffect(() => {
-    const saved = localStorage.getItem('bookingFormData');
+    const saved = localStorage.getItem('seooBookingFormData');
     if (saved) {
       try {
         const data = JSON.parse(saved);
@@ -167,7 +279,7 @@ export default function BookingPage() {
   // Auto-save form data
   useEffect(() => {
     const subscription = watch(data => {
-      localStorage.setItem('bookingFormData', JSON.stringify(data));
+      localStorage.setItem('seooBookingFormData', JSON.stringify(data));
     });
     return () => subscription.unsubscribe();
   }, [watch]);
@@ -205,20 +317,22 @@ export default function BookingPage() {
   // Calculate estimated price
   const calculatePrice = () => {
     setIsCalculating(true);
-    // Simulated calculation - replace with real API call
     setTimeout(() => {
-      const basePrice = 150;
+      const basePrice = 180;
       const vehicleMultiplier = {
         executive: 1,
         luxury: 1.5,
         suv: 1.3,
       };
       const serviceMultiplier = {
-        airport: 1.2,
-        executive: 1,
-        event: 1.3,
-        tourism: 1.5,
-        contract: 0.9,
+        transfer: 1.2,
+        corporate: 1.3,
+        experience: 1.5,
+        exclusive: 2,
+        dayuse: 1.4,
+        travel: 1.6,
+        care: 1.1,
+        children: 1.2,
       };
 
       const data = methods.getValues();
@@ -244,79 +358,92 @@ export default function BookingPage() {
     }
   };
 
-  // Submit form - CORRIGIDO
+  // Get service label
+  const getServiceLabel = (serviceType: string) => {
+    const service = SEOO_SERVICES.find(s => s.value === serviceType);
+    return service?.label || serviceType;
+  };
+
+  // Submit form - Atualizado para SEOO
   const onSubmit = async (data: BookingFormData) => {
-    console.log('Iniciando submit com dados:', data);
+    console.log('Enviando reserva SEOO:', data);
 
     try {
-      // Format message for WhatsApp
+      // Format message for WhatsApp - SEOO
       const message = `
-🚗 *NOVA RESERVA - Elite Driver*
+*NOVA RESERVA - SEOO MOBILIDADE EXECUTIVA*
+Mobilidade do seu jeito, no seu tempo
 
 *DADOS DO CLIENTE*
-👤 Nome: ${data.fullName}
-📧 Email: ${data.email}
-📱 Telefone: ${data.phone}
-${data.cpf ? `📄 CPF: ${data.cpf}\n` : ''}
+Nome: ${data.fullName}
+Email: ${data.email}
+Telefone: ${data.phone}
+${data.cpf ? `CPF: ${data.cpf}\n` : ''}
 ${
-  data.isCompany ? `🏢 Empresa: ${data.companyName}\n📄 CNPJ: ${data.cnpj}` : ''
+  data.isCompany ? `Empresa: ${data.companyName}\n CNPJ: ${data.cnpj}` : ''
 }
 
+*SERVIÇO SOLICITADO*
+Tipo: ${getServiceLabel(data.serviceType)}
+Motorista: Feminina
+
 *DETALHES DA VIAGEM*
-📍 Embarque: ${data.pickupAddress}
-📍 Destino: ${data.destinationAddress}
-📅 Data: ${formatDateForDisplay(data.tripDate)}
-🕐 Horário: ${data.tripTime}
+Embarque: ${data.pickupAddress}
+Destino: ${data.destinationAddress}
+Data: ${formatDateForDisplay(data.tripDate)}
+Horário: ${data.tripTime}
 ${
   data.returnTrip
-    ? `🔄 Volta: ${formatDateForDisplay(data.returnDate || '')} às ${
+    ? `Volta: ${formatDateForDisplay(data.returnDate || '')} às ${
         data.returnTime
       }`
     : ''
 }
 
 *INFORMAÇÕES ADICIONAIS*
-👥 Passageiros: ${data.passengers}
-🚙 Veículo: ${
+Passageiros: ${data.passengers}
+Veículo: ${
         data.vehicleType === 'executive'
           ? 'Executivo'
           : data.vehicleType === 'luxury'
           ? 'Luxo'
-          : 'SUV'
+          : 'SUV Híbrido'
       }
-${data.specialNeeds.wheelchair ? '♿ Acessível para cadeirante\n' : ''}
-${data.specialNeeds.extraLuggage ? '🧳 Bagagem extra\n' : ''}
-${data.specialNeeds.petFriendly ? '🐕 Pet friendly\n' : ''}
-${data.specialNeeds.childSeat ? '👶 Cadeirinha infantil\n' : ''}
-${data.observations ? `📝 Observações: ${data.observations}\n` : ''}
+${data.specialNeeds.wheelchair ? 'Acessível para cadeirante\n' : ''}
+${data.specialNeeds.extraLuggage ? 'Bagagem extra\n' : ''}
+${data.specialNeeds.petFriendly ? 'Pet friendly\n' : ''}
+${data.specialNeeds.childSeat ? 'Cadeirinha infantil\n' : ''}
+${data.observations ? `Observações: ${data.observations}\n` : ''}
 
 *PAGAMENTO*
-💳 Forma: ${
+Forma: ${
         data.paymentMethod === 'pix'
           ? 'PIX'
           : data.paymentMethod === 'card'
           ? 'Cartão'
           : 'Faturamento'
       }
-💰 Valor estimado: R$ ${estimatedPrice?.toFixed(2) || 'A calcular'}
+Valor estimado: R$ ${estimatedPrice?.toFixed(2) || 'A calcular'}
+
+Reserva realizada pelo site SEOO
       `.trim();
 
       console.log('Mensagem formatada:', message);
 
-      // Send to WhatsApp
-      const whatsappNumber = '351912164220'; // Replace with real number
+      // Send to WhatsApp - Número real da SEOO
+      const whatsappNumber = '5511945164043';
       const encodedMessage = encodeURIComponent(message);
       const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
 
-      console.log('URL do WhatsApp:', whatsappUrl);
+      console.log('URL do WhatsApp SEOO:', whatsappUrl);
 
       // Clear saved form data
-      localStorage.removeItem('bookingFormData');
+      localStorage.removeItem('seooBookingFormData');
 
       // Open WhatsApp
       window.open(whatsappUrl, '_blank');
 
-      toast.success('Reserva enviada! Aguarde nosso contato.');
+      toast.success('Reserva enviada! Aguarde nosso contato. 💜');
 
       // Reset form
       methods.reset();
@@ -337,7 +464,6 @@ ${data.observations ? `📝 Observações: ${data.observations}\n` : ''}
 
     if (!isValid) {
       console.log('Erros encontrados:', methods.formState.errors);
-      // Mostrar toast com o primeiro erro encontrado
       const firstError = Object.values(methods.formState.errors)[0];
       if (firstError && 'message' in firstError) {
         toast.error(firstError.message as string);
@@ -360,7 +486,6 @@ ${data.observations ? `📝 Observações: ${data.observations}\n` : ''}
   const getFieldsForStep = (step: number) => {
     switch (step) {
       case 1:
-        // Only validate required fields and conditional fields if company is selected
         const step1Fields = ['fullName', 'email', 'phone'];
         if (watch('isCompany')) {
           step1Fields.push('companyName', 'cnpj');
@@ -395,12 +520,16 @@ ${data.observations ? `📝 Observações: ${data.observations}\n` : ''}
       <div className='container mx-auto px-4 py-12'>
         {/* Header */}
         <div className='text-center mb-12'>
+          <div className='inline-flex items-center gap-2 bg-primary/10 rounded-full px-4 py-2 mb-4'>
+            <Heart className='w-5 h-5 text-secondary' />
+            <span className='text-primary font-medium'>100% Motoristas Mulheres</span>
+          </div>
           <h1 className='text-4xl font-bold text-primary mb-4'>
-            Agendar Viagem
+            Agendar Viagem SEOO
           </h1>
           <p className='text-gray-600 max-w-2xl mx-auto'>
-            Complete o formulário abaixo para solicitar seu transporte
-            executivo. Retornaremos em minutos com a confirmação.
+            Mobilidade executiva pensada para mulheres. Complete o formulário 
+            e nossa equipe entrará em contato para confirmar sua reserva.
           </p>
         </div>
 
@@ -487,7 +616,7 @@ ${data.observations ? `📝 Observações: ${data.observations}\n` : ''}
                         <input
                           {...methods.register('fullName')}
                           className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary'
-                          placeholder='João Silva'
+                          placeholder='Maria Silva'
                         />
                         {methods.formState.errors.fullName && (
                           <p className='text-red-500 text-sm mt-1'>
@@ -504,7 +633,7 @@ ${data.observations ? `📝 Observações: ${data.observations}\n` : ''}
                           {...methods.register('email')}
                           type='email'
                           className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary'
-                          placeholder='joao@empresa.com'
+                          placeholder='maria@empresa.com'
                         />
                         {methods.formState.errors.email && (
                           <p className='text-red-500 text-sm mt-1'>
@@ -515,7 +644,7 @@ ${data.observations ? `📝 Observações: ${data.observations}\n` : ''}
 
                       <div>
                         <label className='block text-sm font-medium text-gray-700 mb-2'>
-                          Telefone *
+                          Telefone/WhatsApp *
                         </label>
                         <input
                           {...methods.register('phone')}
@@ -607,6 +736,20 @@ ${data.observations ? `📝 Observações: ${data.observations}\n` : ''}
                         </motion.div>
                       )}
                     </div>
+
+                    {/* Info Box SEOO */}
+                    <div className='bg-secondary/10 border border-secondary/30 rounded-lg p-4 flex items-start gap-3'>
+                      <Heart className='w-5 h-5 text-secondary flex-shrink-0 mt-0.5' />
+                      <div>
+                        <p className='text-sm text-gray-700 font-medium'>
+                          Você está reservando com a SEOO
+                        </p>
+                        <p className='text-xs text-gray-600 mt-1'>
+                          Mobilidade executiva com motoristas 100% femininas. 
+                          Segurança, conforto e respeito em cada trajeto.
+                        </p>
+                      </div>
+                    </div>
                   </motion.div>
                 )}
 
@@ -625,32 +768,14 @@ ${data.observations ? `📝 Observações: ${data.observations}\n` : ''}
 
                     <div>
                       <label className='block text-sm font-medium text-gray-700 mb-3'>
-                        Tipo de Serviço *
+                        Escolha o Serviço SEOO *
                       </label>
-                      <div className='grid grid-cols-2 md:grid-cols-3 gap-3'>
-                        {[
-                          {
-                            value: 'airport',
-                            label: 'Transfer Aeroporto',
-                            icon: Plane,
-                          },
-                          {
-                            value: 'executive',
-                            label: 'Executivo',
-                            icon: Briefcase,
-                          },
-                          { value: 'event', label: 'Eventos', icon: Star },
-                          { value: 'tourism', label: 'Turismo', icon: Camera },
-                          {
-                            value: 'contract',
-                            label: 'Contrato',
-                            icon: FileText,
-                          },
-                        ].map(service => (
+                      <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
+                        {SEOO_SERVICES.map(service => (
                           <label
                             key={service.value}
                             className={`
-                              flex items-center gap-2 p-3 border rounded-lg cursor-pointer transition-all
+                              flex items-start gap-3 p-4 border rounded-lg cursor-pointer transition-all
                               ${
                                 watch('serviceType') === service.value
                                   ? 'border-primary bg-primary/5 text-primary'
@@ -664,10 +789,11 @@ ${data.observations ? `📝 Observações: ${data.observations}\n` : ''}
                               {...methods.register('serviceType')}
                               className='hidden'
                             />
-                            <service.icon className='w-5 h-5' />
-                            <span className='text-sm font-medium'>
-                              {service.label}
-                            </span>
+                            <service.icon className='w-5 h-5 mt-0.5 flex-shrink-0' />
+                            <div className='flex-1'>
+                              <p className='font-semibold text-sm'>{service.label}</p>
+                              <p className='text-xs text-gray-500 mt-0.5'>{service.subtitle}</p>
+                            </div>
                           </label>
                         ))}
                       </div>
@@ -822,7 +948,7 @@ ${data.observations ? `📝 Observações: ${data.observations}\n` : ''}
                           })}
                           className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary'
                         >
-                          {[1, 2, 3, 4].map(num => (
+                          {[1, 2, 3, 4, 5, 6, 7].map(num => (
                             <option key={num} value={num}>
                               {num} {num === 1 ? 'passageiro' : 'passageiros'}
                             </option>
@@ -839,12 +965,24 @@ ${data.observations ? `📝 Observações: ${data.observations}\n` : ''}
                           {...methods.register('vehicleType')}
                           className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary'
                         >
-                          <option value='executive'>
-                            Executivo - Sedan Premium
-                          </option>
+                          <option value='suv'>SUV Híbrido Premium (Recomendado)</option>
+                          <option value='executive'>Executivo - Sedan Premium</option>
                           <option value='luxury'>Luxo - Mercedes/BMW</option>
-                          <option value='suv'>SUV - Maior Conforto</option>
                         </select>
+                      </div>
+                    </div>
+
+                    {/* SEOO Special Badge */}
+                    <div className='bg-gradient-to-r from-primary to-primary-600 text-white rounded-lg p-4'>
+                      <div className='flex items-center gap-3'>
+                        <Heart className='w-8 h-8 text-secondary' />
+                        <div>
+                          <p className='font-semibold'>100% Motoristas Mulheres</p>
+                          <p className='text-sm text-gray-200'>
+                            Todos os serviços SEOO são realizados exclusivamente 
+                            por motoristas femininas capacitadas e experientes.
+                          </p>
+                        </div>
                       </div>
                     </div>
 
@@ -953,15 +1091,26 @@ ${data.observations ? `📝 Observações: ${data.observations}\n` : ''}
 
                     {/* Trip Summary */}
                     <div className='bg-gray-50 rounded-xl p-6 space-y-4'>
-                      <h3 className='font-semibold text-lg text-primary'>
-                        Resumo da Viagem
-                      </h3>
+                      <div className='flex items-center justify-between mb-4'>
+                        <h3 className='font-semibold text-lg text-primary'>
+                          Resumo da Viagem SEOO
+                        </h3>
+                        <div className='bg-secondary text-primary px-3 py-1 rounded-full text-sm font-medium'>
+                          100% Motoristas Mulheres
+                        </div>
+                      </div>
 
                       <div className='space-y-3 text-sm'>
                         <div className='flex justify-between'>
-                          <span className='text-gray-600'>Passageiro:</span>
+                          <span className='text-gray-600'>Passageira:</span>
                           <span className='font-medium'>
                             {watch('fullName')}
+                          </span>
+                        </div>
+                        <div className='flex justify-between'>
+                          <span className='text-gray-600'>Serviço:</span>
+                          <span className='font-medium'>
+                            {getServiceLabel(watch('serviceType'))}
                           </span>
                         </div>
                         <div className='flex justify-between'>
@@ -990,7 +1139,13 @@ ${data.observations ? `📝 Observações: ${data.observations}\n` : ''}
                               ? 'Executivo'
                               : watch('vehicleType') === 'luxury'
                               ? 'Luxo'
-                              : 'SUV'}
+                              : 'SUV Híbrido'}
+                          </span>
+                        </div>
+                        <div className='flex justify-between'>
+                          <span className='text-gray-600'>Motorista:</span>
+                          <span className='font-medium text-secondary'>
+                            100% Feminina
                           </span>
                         </div>
                       </div>
@@ -1136,7 +1291,7 @@ ${data.observations ? `📝 Observações: ${data.observations}\n` : ''}
                           </p>
                           <p className='text-gray-600 mt-1'>
                             Ao confirmar, você autoriza o envio dos seus dados
-                            via WhatsApp para finalização da reserva.
+                            via WhatsApp para finalização da reserva com a SEOO.
                           </p>
                         </div>
                       </label>
@@ -1156,6 +1311,10 @@ ${data.observations ? `📝 Observações: ${data.observations}\n` : ''}
                       <div className='flex items-center gap-2'>
                         <MessageCircle className='w-5 h-5' />
                         <span>Via WhatsApp</span>
+                      </div>
+                      <div className='flex items-center gap-2'>
+                        <Heart className='w-5 h-5 text-secondary' />
+                        <span>SEOO</span>
                       </div>
                     </div>
                   </motion.div>
