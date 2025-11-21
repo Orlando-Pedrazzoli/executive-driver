@@ -177,7 +177,7 @@ const services = [
     title: 'SEOO Transfer',
     subtitle: 'Seu embarque começa antes do destino',
     description: 'Transfers para aeroportos, hotéis e reuniões com pontualidade e conforto absoluto.',
-    carouselImages: ['/carousel-1.jpg', '/carousel-2.jpg'],
+    carouselImages: ['/carousel-1.jpg', '/carousel-12.jpg'],
     icon: Plane,
     features: [
       'Monitoramento de voo em tempo real',
@@ -231,7 +231,7 @@ const services = [
     title: 'SEOO Exclusive',
     subtitle: 'Sua motorista exclusiva, todos os dias',
     description: 'Contrato mensal que une confiança, rotina e máxima discrição com SUVs de alto padrão.',
-    carouselImages: ['/carousel-7.jpg', '/carousel-8.jpg'],
+    carouselImages: ['/carousel-7.jpg', '/carousel-2.jpg'],
     icon: UserCheck,
     features: [
       'Motorista dedicada',
@@ -249,7 +249,7 @@ const services = [
     title: 'SEOO Day Use',
     subtitle: 'Exclusividade quando você precisar',
     description: 'Motorista por um dia, com cuidado e atenção personalizada para compromissos, eventos ou lazer.',
-    carouselImages: ['/carousel-9.jpg', '/carousel-10.jpg'],
+    carouselImages: ['/carousel-8.jpg', '/carousel-13.jpg'],
     icon: Calendar,
     features: [
       'Período de 4 a 12 horas',
@@ -267,7 +267,7 @@ const services = [
     title: 'SEOO Travel',
     subtitle: 'Conforto que vai além da sua cidade',
     description: 'Viagens intermunicipais com SUVs premium, tecnologia de bordo e total privacidade.',
-    carouselImages: ['/carousel-11.jpg', '/carousel-12.jpg'],
+    carouselImages: ['/carousel-18.jpg', '/carousel-14.jpg'],
     icon: MapPin,
     features: [
       'Rotas planejadas',
@@ -285,7 +285,7 @@ const services = [
     title: 'SEOO Care',
     subtitle: 'Mobilidade acessível, com cuidado em cada detalhe',
     description: 'Atendimento porta a porta para maiores de 65 anos ou com necessidades específicas, unindo conforto, cuidado e tranquilidade.',
-    carouselImages: ['/carousel-13.jpg', '/carousel-14.jpg'],
+    carouselImages: ['/carousel-16.jpg', '/carousel-17.jpg'],
     icon: Heart,
     features: [
       'Apoio no embarque/desembarque',
@@ -303,7 +303,7 @@ const services = [
     title: 'SEOO Children & Teens',
     subtitle: 'Segurança que acompanha cada fase',
     description: 'Mobilidade para crianças e adolescentes com motoristas treinadas que também são mães, garantindo cuidado e tranquilidade total às famílias.',
-    carouselImages: ['/carousel-15.jpg', '/carousel-16.jpg'],
+    carouselImages: ['/carousel-11.jpg', '/carousel-10.jpg'],
     icon: Baby,
     features: [
       'Motoristas mães experientes',
@@ -314,7 +314,7 @@ const services = [
       'Máxima segurança',
     ],
     price: 'Pacotes mensais',
-    popular: true,
+    popular: false,
   },
 ];
 
