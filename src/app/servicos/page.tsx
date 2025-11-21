@@ -242,7 +242,7 @@ const services = [
       'Economia de até 30%',
     ],
     price: 'Planos mensais',
-    popular: true,
+    popular: false,
   },
   {
     id: 'dayuse',

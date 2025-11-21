@@ -1,8 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import Link from 'next/link';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 import {
   Shield,
   FileText,
@@ -31,90 +33,233 @@ const complianceSections = [
     icon: Building2,
     title: 'Informações Corporativas',
     color: 'from-primary to-primary-600',
+    description: 'Conheça nossa estrutura empresarial e missão',
   },
   {
     id: 'lgpd',
     icon: Lock,
     title: 'LGPD e Privacidade',
     color: 'from-blue-500 to-blue-600',
+    description: 'Como protegemos seus dados pessoais',
   },
   {
     id: 'terms',
     icon: FileText,
     title: 'Termos de Uso',
     color: 'from-purple-500 to-purple-600',
+    description: 'Regras e condições de utilização',
   },
   {
     id: 'cancellation',
     icon: AlertCircle,
     title: 'Política de Cancelamento',
     color: 'from-orange-500 to-orange-600',
+    description: 'Prazos e condições de cancelamento',
   },
   {
     id: 'conduct',
     icon: UserCheck,
     title: 'Código de Conduta',
     color: 'from-pink-500 to-pink-600',
+    description: 'Nossos valores e princípios éticos',
   },
   {
     id: 'safety',
     icon: Shield,
     title: 'Compromissos de Segurança',
     color: 'from-red-500 to-red-600',
+    description: 'Medidas de proteção e segurança',
   },
   {
     id: 'sustainability',
     icon: Leaf,
     title: 'Sustentabilidade',
     color: 'from-green-500 to-green-600',
+    description: 'Nosso compromisso com o meio ambiente',
   },
   {
     id: 'contact',
     icon: Phone,
     title: 'Canal de Ouvidoria',
     color: 'from-secondary to-secondary-600',
+    description: 'Fale conosco e tire suas dúvidas',
   },
 ];
 
 export default function CompliancePage() {
+  const [imageError, setImageError] = useState(false);
   const [ref1, inView1] = useInView({ triggerOnce: true, threshold: 0.1 });
   const [ref2, inView2] = useInView({ triggerOnce: true, threshold: 0.1 });
 
+  // Função para scroll suave
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const offset = 100; // Offset para compensar a navbar
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth',
+      });
+    }
+  };
+
   return (
-    <div className='min-h-screen bg-gray-50 pt-20'>
+    <div className='min-h-screen bg-gray-50 pt-16 sm:pt-20'>
       {/* Hero Section */}
-      <section className='relative py-20 text-white overflow-hidden'>
-        {/* Imagem de Background */}
+      <section className='relative py-16 sm:py-20 md:py-24 text-white overflow-hidden min-h-[400px] sm:min-h-[500px] flex items-center'>
         <div className='absolute inset-0'>
-          <Image
-            src='/compliance-banner.jpg'
-            alt='Compliance SEOO'
-            fill
-            className='object-cover'
-            priority
-          />
-          {/* Overlay escuro para melhor legibilidade do texto */}
-          <div className='absolute inset-0 bg-gradient-to-br from-black/20 via-black/50 to-black/20' />
+          {!imageError ? (
+            <>
+              <Image
+                src='https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=2070&auto=format&fit=crop'
+                alt='Compliance e Governança SEOO'
+                fill
+                className='object-cover object-center'
+                priority
+                onError={() => setImageError(true)}
+                quality={80}
+                sizes='100vw'
+              />
+              <div className='absolute inset-0 bg-gradient-to-br from-primary/55 via-primary/75 to-primary-600/85' />
+            </>
+          ) : (
+            <div className='absolute inset-0'>
+              <div className='absolute inset-0 bg-gradient-to-br from-primary via-primary-600 to-primary-700' />
+              <div className='absolute inset-0 opacity-5'>
+                <svg width='100%' height='100%'>
+                  <defs>
+                    <pattern id='grid' width='40' height='40' patternUnits='userSpaceOnUse'>
+                      <circle cx='20' cy='20' r='1' fill='white' />
+                    </pattern>
+                  </defs>
+                  <rect width='100%' height='100%' fill='url(#grid)' />
+                </svg>
+              </div>
+              <div className='absolute top-10 right-10 w-32 h-32 bg-white/5 rounded-full blur-3xl' />
+              <div className='absolute bottom-10 left-10 w-40 h-40 bg-secondary/10 rounded-full blur-3xl' />
+            </div>
+          )}
         </div>
 
-        <div className='container mx-auto px-4 relative z-10'>
+        <div className='container mx-auto px-4 sm:px-6 relative z-10'>
           <div className='max-w-4xl mx-auto text-center'>
-            <div className='flex justify-center mb-6'>
-              <div className='bg-white/10 backdrop-blur-sm rounded-full p-4 shadow-2xl border border-white/20'>
-                <Scale className='w-12 h-12' />
+            <div className='flex justify-center mb-4 sm:mb-6'>
+              <div className='bg-white/10 backdrop-blur-sm rounded-full p-3 sm:p-4 shadow-2xl border border-white/20 hover:scale-110 transition-transform duration-300'>
+                <Scale className='w-10 h-10 sm:w-12 sm:h-12' />
               </div>
             </div>
-            <h1 className='text-5xl font-bold mb-6 drop-shadow-lg'>
+
+            <h1 className='text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 sm:mb-6 drop-shadow-lg px-4 leading-tight'>
               Compliance & Governança
             </h1>
-            <p className='text-xl text-gray-200 mb-4 drop-shadow-md'>
+
+            <p className='text-lg sm:text-xl md:text-2xl text-gray-100 mb-3 sm:mb-4 drop-shadow-md px-4 font-semibold'>
               Transparência, Ética e Responsabilidade
             </p>
-            <p className='text-lg text-gray-300 max-w-2xl mx-auto drop-shadow-md'>
-              Na SEOO, acreditamos que a confiança se constrói através da
-              transparência. Conheça nossas políticas, compromissos e como
-              operamos dentro dos mais altos padrões éticos e legais.
+
+           
+
+            <div className='flex flex-wrap justify-center gap-2 sm:gap-3 md:gap-4 mt-6 sm:mt-8 px-4'>
+              <div className='bg-white/10 backdrop-blur-sm rounded-full px-3 sm:px-4 py-1.5 sm:py-2 flex items-center gap-2 border border-white/20 hover:bg-white/20 transition-all'>
+                <Shield className='w-3 h-3 sm:w-4 sm:h-4' />
+                <span className='text-xs sm:text-sm font-medium'>ISO Compliance</span>
+              </div>
+              <div className='bg-white/10 backdrop-blur-sm rounded-full px-3 sm:px-4 py-1.5 sm:py-2 flex items-center gap-2 border border-white/20 hover:bg-white/20 transition-all'>
+                <Lock className='w-3 h-3 sm:w-4 sm:h-4' />
+                <span className='text-xs sm:text-sm font-medium'>LGPD Certified</span>
+              </div>
+              <div className='bg-white/10 backdrop-blur-sm rounded-full px-3 sm:px-4 py-1.5 sm:py-2 flex items-center gap-2 border border-white/20 hover:bg-white/20 transition-all'>
+                <CheckCircle2 className='w-3 h-3 sm:w-4 sm:h-4' />
+                <span className='text-xs sm:text-sm font-medium'>Verified</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className='absolute bottom-4 left-1/2 transform -translate-x-1/2 animate-bounce hidden md:block'>
+          <div className='w-6 h-10 border-2 border-white/30 rounded-full flex justify-center'>
+            <div className='w-1 h-3 bg-white/50 rounded-full mt-2'></div>
+          </div>
+        </div>
+      </section>
+
+      {/* Navegação de Seções - MELHORADA */}
+      <section ref={ref1} className='py-12 sm:py-16 bg-white'>
+        <div className='container mx-auto px-4 sm:px-6'>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={inView1 ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6 }}
+            className='text-center mb-8 sm:mb-12'
+          >
+            <h2 className='text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-3 sm:mb-4'>
+              Nossos Pilares de Compliance
+            </h2>
+            <p className='text-sm sm:text-base text-gray-600 max-w-2xl mx-auto px-4'>
+              Acesse informações detalhadas sobre cada área do nosso programa de compliance
             </p>
+          </motion.div>
+
+          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6'>
+            {complianceSections.map((section, index) => {
+              const Icon = section.icon;
+              return (
+                <motion.button
+                  key={section.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={inView1 ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  onClick={() => scrollToSection(section.id)}
+                  className='group relative bg-white rounded-2xl p-5 sm:p-6 shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-transparent text-left w-full cursor-pointer'
+                >
+                  {/* Gradiente no hover */}
+                  <div className={`absolute inset-0 bg-gradient-to-br ${section.color} opacity-0 group-hover:opacity-10 rounded-2xl transition-opacity duration-300`} />
+                  
+                  <div className='relative'>
+                    {/* Ícone */}
+                    <div className={`bg-gradient-to-br ${section.color} rounded-full w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                      <Icon className='w-6 h-6 sm:w-7 sm:h-7 text-white' />
+                    </div>
+
+                    {/* Título */}
+                    <h3 className='text-base sm:text-lg font-bold text-primary mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-primary group-hover:to-primary-600 transition-all'>
+                      {section.title}
+                    </h3>
+
+                    {/* Descrição */}
+                    <p className='text-xs sm:text-sm text-gray-600 mb-3'>
+                      {section.description}
+                    </p>
+
+                    {/* Link com animação */}
+                    <div className='inline-flex items-center text-xs sm:text-sm font-medium text-gray-600 group-hover:text-primary transition-colors'>
+                      Saiba mais
+                      <svg
+                        className='w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform'
+                        fill='none'
+                        stroke='currentColor'
+                        viewBox='0 0 24 24'
+                      >
+                        <path
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth={2}
+                          d='M9 5l7 7-7 7'
+                        />
+                      </svg>
+                    </div>
+                  </div>
+
+                  {/* Indicador visual de que é clicável */}
+                  <div className='absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity'>
+                    <div className='w-2 h-2 bg-primary rounded-full animate-pulse' />
+                  </div>
+                </motion.button>
+              );
+            })}
           </div>
         </div>
       </section>
