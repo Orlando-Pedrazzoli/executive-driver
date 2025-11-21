@@ -1,12 +1,12 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
   Plane,
-  Building,
   Calendar,
   MapPin,
   Shield,
@@ -18,8 +18,8 @@ import {
   Star,
   CheckCircle,
   ChevronRight,
+  ChevronLeft,
   Sparkles,
-  Globe,
   CreditCard,
   Phone,
   Wifi,
@@ -27,10 +27,149 @@ import {
   Heart,
   Baby,
   UserCheck,
-  Accessibility,
-  DollarSign,
   Navigation,
 } from 'lucide-react';
+
+// Componente de Carousel Premium
+const ImageCarousel = ({ images, serviceId }: { images: string[]; serviceId: string }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [direction, setDirection] = useState(0);
+
+  const slideVariants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? 1000 : -1000,
+      opacity: 0,
+    }),
+    center: {
+      zIndex: 1,
+      x: 0,
+      opacity: 1,
+    },
+    exit: (direction: number) => ({
+      zIndex: 0,
+      x: direction < 0 ? 1000 : -1000,
+      opacity: 0,
+    }),
+  };
+
+  const swipeConfidenceThreshold = 10000;
+  const swipePower = (offset: number, velocity: number) => {
+    return Math.abs(offset) * velocity;
+  };
+
+  const paginate = (newDirection: number) => {
+    setDirection(newDirection);
+    setCurrentIndex((prevIndex) => {
+      const nextIndex = prevIndex + newDirection;
+      if (nextIndex < 0) return images.length - 1;
+      if (nextIndex >= images.length) return 0;
+      return nextIndex;
+    });
+  };
+
+  // Auto-play
+  useState(() => {
+    const interval = setInterval(() => {
+      paginate(1);
+    }, 5000); // Troca a cada 5 segundos
+
+    return () => clearInterval(interval);
+  });
+
+  return (
+  <div className='relative h-[350px] overflow-hidden bg-gray-900'>
+      {/* Imagens do Carousel */}
+      <AnimatePresence initial={false} custom={direction}>
+        <motion.div
+          key={currentIndex}
+          custom={direction}
+          variants={slideVariants}
+          initial='enter'
+          animate='center'
+          exit='exit'
+          transition={{
+            x: { type: 'spring', stiffness: 300, damping: 30 },
+            opacity: { duration: 0.2 },
+          }}
+          drag='x'
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={1}
+          onDragEnd={(e, { offset, velocity }) => {
+            const swipe = swipePower(offset.x, velocity.x);
+
+            if (swipe < -swipeConfidenceThreshold) {
+              paginate(1);
+            } else if (swipe > swipeConfidenceThreshold) {
+              paginate(-1);
+            }
+          }}
+          className='absolute inset-0'
+        >
+          <Image
+            src={images[currentIndex]}
+            alt={`Slide ${currentIndex + 1}`}
+            fill
+            className='object-cover'
+            priority={currentIndex === 0}
+          />
+
+          {/* Overlay gradiente para melhor legibilidade */}
+          <div className='absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent' />
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Botões de Navegação */}
+      <button
+        onClick={() => paginate(-1)}
+        className='absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white backdrop-blur-sm p-2 rounded-full transition-all duration-300 hover:scale-110 shadow-lg group'
+        aria-label='Imagem anterior'
+      >
+        <ChevronLeft className='w-5 h-5 text-primary group-hover:scale-110 transition-transform' />
+      </button>
+
+      <button
+        onClick={() => paginate(1)}
+        className='absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white backdrop-blur-sm p-2 rounded-full transition-all duration-300 hover:scale-110 shadow-lg group'
+        aria-label='Próxima imagem'
+      >
+        <ChevronRight className='w-5 h-5 text-primary group-hover:scale-110 transition-transform' />
+      </button>
+
+      {/* Indicadores de Posição (Dots) */}
+      <div className='absolute bottom-4 left-0 right-0 z-10 flex justify-center gap-2'>
+        {images.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => {
+              setDirection(index > currentIndex ? 1 : -1);
+              setCurrentIndex(index);
+            }}
+            className={`
+              h-2 rounded-full transition-all duration-300
+              ${
+                currentIndex === index
+                  ? 'w-8 bg-secondary shadow-lg'
+                  : 'w-2 bg-white/50 hover:bg-white/80'
+              }
+            `}
+            aria-label={`Ir para imagem ${index + 1}`}
+          />
+        ))}
+      </div>
+
+      {/* Progress Bar */}
+      <div className='absolute top-0 left-0 right-0 h-1 bg-white/20 z-10'>
+        <motion.div
+          className='h-full bg-secondary'
+          initial={{ width: '0%' }}
+          animate={{ width: '100%' }}
+          transition={{ duration: 5, ease: 'linear' }}
+          key={currentIndex}
+        />
+      </div>
+    </div>
+  );
+};
 
 const services = [
   {
@@ -38,7 +177,7 @@ const services = [
     title: 'SEOO Transfer',
     subtitle: 'Seu embarque começa antes do destino',
     description: 'Transfers para aeroportos, hotéis e reuniões com pontualidade e conforto absoluto.',
-    image: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2074',
+    carouselImages: ['/carousel-1.jpg', '/carousel-2.jpg'],
     icon: Plane,
     features: [
       'Monitoramento de voo em tempo real',
@@ -49,14 +188,14 @@ const services = [
       'Motoristas 100% mulheres',
     ],
     price: 'A partir de R$ 180',
-    popular: true,
+    popular: false,
   },
   {
     id: 'corporate',
     title: 'SEOO Corporate',
     subtitle: 'Mobilidade à altura da sua empresa',
     description: 'Atendimento exclusivo para executivas e equipes com sofisticação, discrição e eficiência.',
-    image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=2070',
+    carouselImages: ['/carousel-3.jpg', '/carousel-4.jpg'],
     icon: Briefcase,
     features: [
       'Motorista exclusiva feminina',
@@ -74,7 +213,7 @@ const services = [
     title: 'SEOO Experience',
     subtitle: 'A mobilidade dos grandes encontros',
     description: 'Logística completa para feiras comerciais, eventos corporativos e sociais com organização e hospitalidade em cada detalhe.',
-    image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=2070',
+    carouselImages: ['/carousel-5.jpg', '/carousel-6.jpg'],
     icon: Sparkles,
     features: [
       'Coordenação completa de transporte',
@@ -92,7 +231,7 @@ const services = [
     title: 'SEOO Exclusive',
     subtitle: 'Sua motorista exclusiva, todos os dias',
     description: 'Contrato mensal que une confiança, rotina e máxima discrição com SUVs de alto padrão.',
-    image: 'https://images.unsplash.com/photo-1563720360172-67b8f3dce741?q=80&w=2070',
+    carouselImages: ['/carousel-7.jpg', '/carousel-8.jpg'],
     icon: UserCheck,
     features: [
       'Motorista dedicada',
@@ -110,7 +249,7 @@ const services = [
     title: 'SEOO Day Use',
     subtitle: 'Exclusividade quando você precisar',
     description: 'Motorista por um dia, com cuidado e atenção personalizada para compromissos, eventos ou lazer.',
-    image: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?q=80&w=2070',
+    carouselImages: ['/carousel-9.jpg', '/carousel-10.jpg'],
     icon: Calendar,
     features: [
       'Período de 4 a 12 horas',
@@ -128,7 +267,7 @@ const services = [
     title: 'SEOO Travel',
     subtitle: 'Conforto que vai além da sua cidade',
     description: 'Viagens intermunicipais com SUVs premium, tecnologia de bordo e total privacidade.',
-    image: 'https://images.unsplash.com/photo-1494783367193-149034c05e8f?q=80&w=2070',
+    carouselImages: ['/carousel-11.jpg', '/carousel-12.jpg'],
     icon: MapPin,
     features: [
       'Rotas planejadas',
@@ -146,7 +285,7 @@ const services = [
     title: 'SEOO Care',
     subtitle: 'Mobilidade acessível, com cuidado em cada detalhe',
     description: 'Atendimento porta a porta para maiores de 65 anos ou com necessidades específicas, unindo conforto, cuidado e tranquilidade.',
-    image: 'https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?q=80&w=2070',
+    carouselImages: ['/carousel-13.jpg', '/carousel-14.jpg'],
     icon: Heart,
     features: [
       'Apoio no embarque/desembarque',
@@ -164,7 +303,7 @@ const services = [
     title: 'SEOO Children & Teens',
     subtitle: 'Segurança que acompanha cada fase',
     description: 'Mobilidade para crianças e adolescentes com motoristas treinadas que também são mães, garantindo cuidado e tranquilidade total às famílias.',
-    image: 'https://images.unsplash.com/photo-1476234251651-f353703a034d?q=80&w=2070',
+    carouselImages: ['/carousel-15.jpg', '/carousel-16.jpg'],
     icon: Baby,
     features: [
       'Motoristas mães experientes',
@@ -280,25 +419,32 @@ export default function ServicesPage() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className='bg-white rounded-2xl shadow-lg hover:shadow-premium transition-all duration-300 overflow-hidden group'
               >
-                {/* Image */}
-                <div className='relative h-48 overflow-hidden'>
-                  <Image
-                    src={service.image}
-                    alt={service.title}
-                    fill
-                    className='object-cover group-hover:scale-110 transition-transform duration-500'
+                {/* Carousel de Imagens */}
+                <div className='relative'>
+                  <ImageCarousel 
+                    images={service.carouselImages} 
+                    serviceId={service.id}
                   />
-                  <div className='absolute inset-0 bg-gradient-to-t from-black/50 to-transparent' />
 
+                  {/* Badge Popular */}
                   {service.popular && (
-                    <div className='absolute top-4 right-4 bg-secondary text-primary px-3 py-1 rounded-full text-sm font-semibold'>
-                      Popular
-                    </div>
+                    <motion.div
+                      initial={{ scale: 0, rotate: -12 }}
+                      animate={{ scale: 1, rotate: -12 }}
+                      transition={{ delay: 0.5, type: 'spring' }}
+                      className='absolute top-4 right-4 bg-secondary text-primary px-3 py-1 rounded-full text-sm font-semibold z-10 shadow-lg'
+                    >
+                      ⭐ Popular
+                    </motion.div>
                   )}
 
-                  <div className='absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-full p-3'>
+                  {/* Ícone do Serviço */}
+                  <motion.div
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    className='absolute bottom-4 left-4 bg-white/95 backdrop-blur-sm rounded-full p-3 z-10 shadow-xl'
+                  >
                     <service.icon className='w-6 h-6 text-primary' />
-                  </div>
+                  </motion.div>
                 </div>
 
                 {/* Content */}
@@ -314,13 +460,16 @@ export default function ServicesPage() {
                   {/* Features */}
                   <ul className='space-y-2 mb-4'>
                     {service.features.slice(0, 3).map((feature, idx) => (
-                      <li
+                      <motion.li
                         key={idx}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={inView1 ? { opacity: 1, x: 0 } : {}}
+                        transition={{ delay: index * 0.1 + idx * 0.1 }}
                         className='flex items-center gap-2 text-sm text-gray-500'
                       >
                         <CheckCircle className='w-4 h-4 text-secondary flex-shrink-0' />
                         {feature}
-                      </li>
+                      </motion.li>
                     ))}
                   </ul>
 
@@ -333,9 +482,9 @@ export default function ServicesPage() {
                     </div>
                     <Link href='/agendamento'>
                       <motion.button
-                        whileHover={{ scale: 1.05 }}
+                        whileHover={{ scale: 1.05, x: 5 }}
                         whileTap={{ scale: 0.95 }}
-                        className='bg-primary hover:bg-primary-600 text-white px-4 py-2 rounded-full text-sm font-medium flex items-center gap-1'
+                        className='bg-gradient-to-r from-primary to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white px-5 py-2.5 rounded-full text-sm font-medium flex items-center gap-2 shadow-lg hover:shadow-xl transition-all'
                       >
                         Solicitar
                         <ChevronRight className='w-4 h-4' />
@@ -374,11 +523,16 @@ export default function ServicesPage() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={inView2 ? { opacity: 1, scale: 1 } : {}}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ y: -5, scale: 1.02 }}
                 className='bg-gray-50 rounded-2xl p-6 text-center hover:shadow-lg transition-all'
               >
-                <div className='bg-gradient-primary rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4'>
+                <motion.div
+                  whileHover={{ rotate: 360 }}
+                  transition={{ duration: 0.6 }}
+                  className='bg-gradient-primary rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4'
+                >
                   <item.icon className='w-8 h-8 text-white' />
-                </div>
+                </motion.div>
                 <h3 className='text-lg font-semibold text-primary mb-2'>
                   {item.title}
                 </h3>
@@ -458,11 +612,16 @@ export default function ServicesPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={inView3 ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: index * 0.05 }}
+                whileHover={{ y: -5, scale: 1.05 }}
                 className='text-center'
               >
-                <div className='bg-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3 shadow-md'>
+                <motion.div
+                  whileHover={{ rotate: [0, -10, 10, -10, 0] }}
+                  transition={{ duration: 0.5 }}
+                  className='bg-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3 shadow-md hover:shadow-lg transition-shadow'
+                >
                   <item.icon className='w-8 h-8 text-primary' />
-                </div>
+                </motion.div>
                 <h4 className='font-semibold text-gray-800 mb-1'>
                   {item.title}
                 </h4>
@@ -486,9 +645,9 @@ export default function ServicesPage() {
           <div className='flex flex-col sm:flex-row gap-4 justify-center'>
             <Link href='/agendamento'>
               <motion.button
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
-                className='bg-secondary hover:bg-secondary-600 text-primary font-bold px-10 py-4 rounded-full shadow-xl inline-flex items-center gap-2'
+                className='bg-secondary hover:bg-secondary-600 text-primary font-bold px-10 py-4 rounded-full shadow-xl inline-flex items-center gap-2 transition-all'
               >
                 <Calendar className='w-5 h-5' />
                 Agendar Agora
@@ -496,9 +655,9 @@ export default function ServicesPage() {
             </Link>
             <a href='https://wa.me/5511945164043'>
               <motion.button
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
-                className='bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white font-bold px-10 py-4 rounded-full border border-white/30 inline-flex items-center gap-2'
+                className='bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white font-bold px-10 py-4 rounded-full border border-white/30 inline-flex items-center gap-2 transition-all'
               >
                 <Phone className='w-5 h-5' />
                 Falar pelo WhatsApp

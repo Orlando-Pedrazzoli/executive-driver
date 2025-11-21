@@ -14,6 +14,7 @@ import {
   Phone,
   Car,
   Home,
+  Shield,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -43,9 +44,10 @@ export default function Navbar() {
   }, [pathname]);
 
   const navItems = [
-    { href: '/', label: 'Início', icon: Home },
+    { href: '/', label: 'Empresa', icon: Home },
     { href: '/servicos', label: 'Serviços', icon: Briefcase },
-    { href: '/sobre', label: 'Sobre Mim', icon: User },
+    { href: '/compliance', label: 'Compliance', icon: Shield },
+    { href: '/contato', label: 'Contato', icon: Phone },
   ];
 
   // Determinar se estamos na home page
@@ -115,10 +117,10 @@ export default function Navbar() {
                   {!logoError ? (
                     <Image
                       src='/logo-preto-seo.png'
-                      alt='SEO Mobilidade Executiva'
-                      width={120}
-                      height={36}
-                      className='object-contain h-8 w-auto'
+                      alt='SEOO Mobilidade Executiva'
+                      width={100}
+                      height={30}
+                      className='object-contain h-7 w-auto'
                       onError={() => setLogoError(true)}
                     />
                   ) : (
@@ -127,7 +129,7 @@ export default function Navbar() {
                         <Car className='w-5 h-5 text-white' />
                       </div>
                       <span className='font-bold text-lg text-primary'>
-                        SEO
+                        SEOO
                       </span>
                     </div>
                   )}
@@ -210,9 +212,9 @@ export default function Navbar() {
                 <p className='text-xs text-gray-500 text-center'>
                   Atendimento 24/7
                 </p>
-                <a href='tel:+5511999999999' className='block text-center mt-1'>
+                <a href='tel:+5511945164043' className='block text-center mt-1'>
                   <p className='text-base font-bold text-primary hover:text-primary-600 transition-colors'>
-                    (11) 99999-9999
+                    (11) 94516-4043
                   </p>
                 </a>
               </div>
@@ -232,7 +234,7 @@ export default function Navbar() {
             isScrolled
               ? 'bg-white shadow-lg py-2'
               : isHomePage
-              ? 'bg-gradient-to-b from-black/50 to-transparent backdrop-blur-sm py-4'
+              ? 'bg-gradient-to-b from-black/50 to-transparent backdrop-blur-sm py-3 sm:py-4'
               : 'bg-white/95 backdrop-blur-sm shadow-md py-3'
           }
         `}
@@ -244,25 +246,26 @@ export default function Navbar() {
               <motion.div
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.2 }}
-                className='flex flex-col items-center'
+                className='flex flex-col items-start'
               >
                 {/* Logo Image ou Fallback */}
                 {!logoError ? (
                   <Image
                     src={logoSrc}
-                    alt='SEO Mobilidade Executiva'
-                    width={150}
-                    height={45}
-                    className='object-contain h-10 w-auto'
+                    alt='SEOO Mobilidade Executiva'
+                    width={120}
+                    height={36}
+                    className='object-contain h-8 sm:h-9 md:h-10 w-auto'
                     priority
                     onError={() => setLogoError(true)}
+                    sizes='(max-width: 640px) 100px, (max-width: 768px) 120px, 150px'
                   />
                 ) : (
                   // Fallback caso as imagens não carreguem
                   <div className='flex items-center gap-2'>
                     <div
                       className={`
-                      rounded-full p-2 transition-all duration-300
+                      rounded-full p-1.5 sm:p-2 transition-all duration-300
                       ${
                         isScrolled || !isHomePage
                           ? 'bg-gradient-to-r from-primary to-primary-600'
@@ -270,11 +273,11 @@ export default function Navbar() {
                       }
                     `}
                     >
-                      <Car className='w-6 h-6 text-white' />
+                      <Car className='w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white' />
                     </div>
                     <span
                       className={`
-                      font-bold text-xl
+                      font-bold text-lg sm:text-xl
                       ${
                         isScrolled || !isHomePage
                           ? 'text-primary'
@@ -282,7 +285,7 @@ export default function Navbar() {
                       }
                     `}
                     >
-                      SEO
+                      SEOO
                     </span>
                   </div>
                 )}
@@ -290,7 +293,7 @@ export default function Navbar() {
                 {/* Subtítulo abaixo do logo */}
                 <p
                   className={`
-                  text-xs font-medium transition-colors duration-300 mt-1
+                  text-[10px] sm:text-xs font-medium transition-colors duration-300 mt-0.5 sm:mt-1
                   ${subtitleColor}
                 `}
                 >
@@ -386,7 +389,7 @@ export default function Navbar() {
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className={`
-                lg:hidden relative p-2.5 rounded-lg transition-all duration-300 z-50
+                lg:hidden relative p-2 sm:p-2.5 rounded-lg transition-all duration-300 z-50
                 ${
                   isScrolled || !isHomePage
                     ? 'text-primary hover:bg-primary/10'
@@ -395,22 +398,22 @@ export default function Navbar() {
               `}
               aria-label='Menu'
             >
-              <div className='relative w-6 h-6 flex items-center justify-center'>
+              <div className='relative w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center'>
                 <span
                   className={`
-                  absolute h-0.5 w-6 bg-current transition-all duration-300
+                  absolute h-0.5 w-5 sm:w-6 bg-current transition-all duration-300
                   ${isMobileMenuOpen ? 'rotate-45' : '-translate-y-2'}
                 `}
                 />
                 <span
                   className={`
-                  absolute h-0.5 w-6 bg-current transition-all duration-300
+                  absolute h-0.5 w-5 sm:w-6 bg-current transition-all duration-300
                   ${isMobileMenuOpen ? 'opacity-0' : 'opacity-100'}
                 `}
                 />
                 <span
                   className={`
-                  absolute h-0.5 w-6 bg-current transition-all duration-300
+                  absolute h-0.5 w-5 sm:w-6 bg-current transition-all duration-300
                   ${isMobileMenuOpen ? '-rotate-45' : 'translate-y-2'}
                 `}
                 />
